@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minecraft Сервері – Ойнай бастау</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --orange: #FF9F43;
+    --orange-light: #FFB74D;
+    --orange-dark: #E8890E;
+    --orange-glow: rgba(255,159,67,0.25);
+    --bg: #F8F7F4;
+    --bg2: #FFFFFF;
+    --text: #1A1A2E;
+    --text-muted: #6B7280;
+    --border: rgba(0,0,0,0.08);
+    --shadow: 0 4px 22px rgba(0,0,0,0.08);
+    --shadow-lg: 0 11px 43px rgba(0,0,0,0.12);
+    --radius: 14px;
+    --glass: rgba(255,255,255,0.7);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    line-height: 1.6;
+    font-size: 14.4px;
+  }
+
+  /* ── NAVBAR ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    padding: 0 5%;
+    height: 63px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    box-shadow: 0 2px 18px rgba(0,0,0,0.06);
+    transition: all .3s;
+  }
+
+  .nav-logo {
+    font-size: 1.12rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+    display: flex; align-items: center; gap: 7px;
+    text-decoration: none;
+  }
+  .nav-logo i { font-size: 1.25rem; -webkit-text-fill-color: var(--orange); }
+
+  .nav-links { display: flex; align-items: center; gap: 29px; list-style: none; }
+  .nav-links a {
+    text-decoration: none; color: var(--text-muted);
+    font-weight: 500; font-size: .81rem;
+    transition: color .2s; position: relative;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 2px; background: var(--orange);
+    transform: scaleX(0); transform-origin: center; transition: transform .25s;
+  }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a:hover::after { transform: scaleX(1); }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 20px; border-radius: 50px;
+    font-family: 'Poppins', sans-serif; font-weight: 600; font-size: .79rem;
+    cursor: pointer; border: none; text-decoration: none;
+    transition: all .25s; white-space: nowrap;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+    color: #fff; box-shadow: 0 4px 14px var(--orange-glow);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 7px 22px rgba(255,159,67,0.45); }
+
+  /* ── HAMBURGER ── */
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 6px; }
+  .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: all .3s; }
+  .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+  /* ── HERO ── */
+  #home {
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 90px 5% 54px;
+    position: relative; overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 100%, rgba(255,159,67,0.18) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 80% 20%, rgba(255,183,77,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 50% at 10% 60%, rgba(255,159,67,0.1) 0%, transparent 60%),
+      linear-gradient(160deg, #FFF9F2 0%, #F8F7F4 50%, #FFF4E6 100%);
+  }
+  .hero-bg::after {
+    content: ''; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,159,67,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,159,67,0.04) 1px, transparent 1px);
+    background-size: 36px 36px;
+  }
+
+  .blob { position: absolute; border-radius: 50%; filter: blur(55px); opacity: .5; z-index: 0; animation: blobFloat 8s ease-in-out infinite alternate; }
+  .blob-1 { width: 360px; height: 360px; background: rgba(255,183,77,0.2); top: 5%; left: -5%; animation-delay: 0s; }
+  .blob-2 { width: 270px; height: 270px; background: rgba(255,120,50,0.15); bottom: 10%; right: -5%; animation-delay: -3s; }
+  .blob-3 { width: 180px; height: 180px; background: rgba(255,200,100,0.2); top: 40%; right: 20%; animation-delay: -6s; }
+  @keyframes blobFloat { from { transform: translate(0,0) scale(1); } to { transform: translate(18px,27px) scale(1.1); } }
+
+  .hero-content { position: relative; z-index: 1; max-width: 700px; }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(255,159,67,0.12); border: 1px solid rgba(255,159,67,0.3);
+    padding: 5px 14px; border-radius: 50px;
+    font-size: .72rem; font-weight: 600; color: var(--orange-dark);
+    margin-bottom: 22px; backdrop-filter: blur(8px);
+  }
+  .hero-badge .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #4CAF50; box-shadow: 0 0 0 3px rgba(76,175,80,0.25);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 3px rgba(76,175,80,.25); }
+    50%      { box-shadow: 0 0 0 6px rgba(76,175,80,.1); }
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 4.5vw, 3.6rem);
+    font-weight: 900; line-height: 1.1; color: var(--text);
+    letter-spacing: -2px; margin-bottom: 18px;
+  }
+  .hero-title .accent {
+    background: linear-gradient(135deg, var(--orange), #FF6B35);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: .99rem; color: var(--text-muted); font-weight: 400;
+    max-width: 500px; margin: 0 auto 36px;
+  }
+
+  .ip-widget {
+    display: inline-flex; align-items: center;
+    background: var(--glass); border: 1px solid rgba(255,159,67,0.25);
+    border-radius: 13px; padding: 5px 5px 5px 18px;
+    backdrop-filter: blur(16px); box-shadow: 0 7px 29px rgba(0,0,0,0.08);
+    margin-bottom: 29px; max-width: 100%; flex-wrap: wrap; gap: 7px; justify-content: center;
+  }
+  .ip-label { font-size: .68rem; color: var(--text-muted); font-weight: 500; white-space: nowrap; }
+  .ip-address { font-size: .99rem; font-weight: 700; color: var(--text); margin: 0 11px; white-space: nowrap; letter-spacing: 0.3px; }
+  #copy-btn {
+    background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+    color: #fff; border: none; border-radius: 9px;
+    padding: 9px 18px; cursor: pointer;
+    font-family: 'Poppins', sans-serif; font-weight: 600; font-size: .76rem;
+    transition: all .25s; white-space: nowrap; display: flex; align-items: center; gap: 6px;
+  }
+  #copy-btn:hover { transform: scale(1.04); box-shadow: 0 4px 14px var(--orange-glow); }
+  #copy-btn.copied { background: linear-gradient(135deg, #4CAF50, #2E7D32); }
+
+  .hero-stats { display: flex; justify-content: center; gap: 36px; flex-wrap: wrap; }
+  .stat { text-align: center; }
+  .stat-num { font-size: 1.44rem; font-weight: 800; color: var(--text); }
+  .stat-num .orange { color: var(--orange); }
+  .stat-label { font-size: .7rem; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
+
+  /* ── SECTIONS ── */
+  section { padding: 81px 5%; }
+  .section-header { text-align: center; margin-bottom: 54px; }
+  .section-tag {
+    display: inline-block; background: rgba(255,159,67,0.12);
+    color: var(--orange-dark); font-weight: 600; font-size: .72rem;
+    padding: 4px 13px; border-radius: 50px; margin-bottom: 13px; letter-spacing: 1px; text-transform: uppercase;
+  }
+  .section-title { font-size: clamp(1.62rem, 3.15vw, 2.52rem); font-weight: 800; letter-spacing: -1px; color: var(--text); }
+  .section-sub { color: var(--text-muted); margin-top: 9px; font-size: .9rem; }
+
+  /* ── SHOP ── */
+  #shop { background: linear-gradient(160deg, #FFF9F2 0%, var(--bg) 100%); }
+
+  .ranks-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 18px; align-items: end;
+  }
+
+  .rank-card {
+    background: var(--bg2); border-radius: var(--radius);
+    padding: 22px 17px; border: 1.5px solid var(--border);
+    transition: all .35s cubic-bezier(.34,1.56,.64,1);
+    position: relative; overflow: hidden; cursor: pointer;
+  }
+  .rank-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--card-color, var(--orange));
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .rank-card:hover { transform: translateY(-7px); box-shadow: 0 18px 54px rgba(0,0,0,0.12); }
+
+  .tier-1 { --card-color: #78909C; }
+  .tier-1 .rank-icon { background: rgba(120,144,156,0.12); color: #78909C; }
+  .tier-1 .btn-buy { background: #78909C; }
+  .tier-1 .price-num { color: #78909C; }
+
+  .tier-2 { --card-color: #66BB6A; }
+  .tier-2 .rank-icon { background: rgba(102,187,106,0.12); color: #66BB6A; }
+  .tier-2 .btn-buy { background: #66BB6A; }
+  .tier-2 .price-num { color: #66BB6A; }
+
+  /* Tier 3 – Кіші-Админ */
+  .tier-3 { --card-color: var(--orange); }
+  .tier-3 .rank-icon { background: rgba(255,159,67,0.12); color: var(--orange); }
+  .tier-3 .btn-buy { background: linear-gradient(135deg, var(--orange), var(--orange-dark)); box-shadow: 0 4px 14px var(--orange-glow); }
+  .tier-3 .price-num { color: var(--orange); }
+
+  /* Tier 4 – Бас-Админ */
+  .tier-4 { --card-color: #AB47BC; background: linear-gradient(160deg, #FDF8FF 0%, #fff 100%); }
+  .tier-4 .rank-icon { background: rgba(171,71,188,0.12); color: #AB47BC; }
+  .tier-4 .btn-buy { background: linear-gradient(135deg, #AB47BC, #7B1FA2); box-shadow: 0 4px 14px rgba(171,71,188,.3); }
+  .tier-4 .price-num { color: #AB47BC; }
+
+  /* Tier 5 – Консоль */
+  .tier-5 {
+    background: linear-gradient(155deg, #1C1C2E 0%, #15152A 100%);
+    color: #fff;
+    border: 1.5px solid rgba(255,210,0,0.35);
+    box-shadow: 0 0 28px rgba(255,200,0,0.15), 0 16px 48px rgba(0,0,0,0.25);
+    animation: goldPulse 3.5s ease-in-out infinite alternate;
+  }
+  @keyframes goldPulse {
+    from { box-shadow: 0 0 20px rgba(255,200,0,0.12), 0 16px 48px rgba(0,0,0,0.25); border-color: rgba(255,210,0,0.3); }
+    to   { box-shadow: 0 0 36px rgba(255,200,0,0.32), 0 16px 48px rgba(0,0,0,0.3);  border-color: rgba(255,210,0,0.55); }
+  }
+  .tier-5::before { background: linear-gradient(90deg, #FFD700, #FFA500); }
+  .tier-5 .rank-name  { color: #FFD700; }
+  .tier-5 .price-num  { color: #FFD700; }
+  .tier-5 .price-period { color: rgba(255,255,255,0.5); }
+  .tier-5 .rank-desc  { color: rgba(255,255,255,0.55); }
+  .tier-5 .perk       { color: rgba(255,255,255,0.8); }
+  .tier-5 .perk i     { color: #FFD700; }
+  .tier-5 .rank-icon  { background: rgba(255,215,0,0.12); color: #FFD700; }
+  .tier-5 .btn-buy    { background: linear-gradient(135deg, #FFD700, #FFA500); color: #1A1A2E; font-weight: 700; box-shadow: 0 4px 18px rgba(255,200,0,.35); }
+  .tier-5 .btn-buy:hover { box-shadow: 0 7px 26px rgba(255,200,0,.55); }
+  .tier-5 .popular-badge { background: rgba(255,215,0,0.15); color: #FFD700; border-color: rgba(255,215,0,0.3); }
+  .tier-5 .divider    { border-color: rgba(255,255,255,0.1); }
+  .tier-5:hover { transform: translateY(-7px); }
+
+  .popular-badge {
+    display: inline-block; font-size: .61rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px;
+    padding: 3px 9px; border-radius: 50px;
+    background: rgba(255,159,67,0.12); color: var(--orange-dark);
+    border: 1px solid rgba(255,159,67,0.3); margin-bottom: 11px;
+  }
+
+  .rank-icon {
+    width: 47px; height: 47px; border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.25rem; margin-bottom: 14px; transition: transform .3s;
+  }
+  .rank-card:hover .rank-icon { transform: rotate(-5deg) scale(1.1); }
+
+  .rank-name  { font-size: .99rem; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 4px; }
+  .rank-desc  { font-size: .72rem; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
+
+  .price-block { margin-bottom: 14px; }
+  .price-num   { font-size: 1.71rem; font-weight: 900; letter-spacing: -1px; line-height: 1; }
+  .price-period { font-size: .7rem; color: var(--text-muted); font-weight: 500; }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 14px 0; }
+
+  .perks { list-style: none; margin-bottom: 18px; display: flex; flex-direction: column; gap: 7px; }
+  .perk  { display: flex; align-items: flex-start; gap: 7px; font-size: .74rem; color: var(--text-muted); line-height: 1.4; }
+  .perk i { color: var(--orange); font-size: .68rem; margin-top: 3px; flex-shrink: 0; }
+
+  .btn-buy {
+    width: 100%; padding: 10px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+    color: #fff; border: none; font-family: 'Poppins', sans-serif;
+    font-weight: 600; font-size: .79rem; cursor: pointer; transition: all .25s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .btn-buy:hover { transform: translateY(-2px); opacity: .92; }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed; bottom: 27px; left: 50%; transform: translateX(-50%) translateY(72px);
+    background: #1A1A2E; color: #fff; padding: 11px 22px; border-radius: 50px;
+    font-size: .79rem; font-weight: 600; display: flex; align-items: center; gap: 7px;
+    z-index: 9999; transition: transform .4s cubic-bezier(.34,1.56,.64,1), opacity .4s;
+    opacity: 0; box-shadow: var(--shadow-lg); pointer-events: none;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+  #toast i { color: #4CAF50; }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 9000;
+    background: rgba(10,10,20,0.6); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 18px; opacity: 0; pointer-events: none; transition: opacity .3s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--bg2); border-radius: 22px; padding: 36px;
+    max-width: 396px; width: 100%; position: relative;
+    transform: scale(.9) translateY(18px);
+    transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+    box-shadow: 0 27px 72px rgba(0,0,0,0.2);
+  }
+  .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+
+  .modal-close {
+    position: absolute; top: 14px; right: 14px;
+    width: 32px; height: 32px; border-radius: 50%;
+    background: var(--bg); border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: .9rem; color: var(--text-muted); transition: all .2s;
+  }
+  .modal-close:hover { background: #fee; color: #e53935; }
+
+  .modal-icon {
+    width: 58px; height: 58px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.62rem; margin-bottom: 18px;
+    background: linear-gradient(135deg, rgba(255,159,67,0.15), rgba(255,183,77,0.1));
+  }
+  .modal-title { font-size: 1.26rem; font-weight: 800; margin-bottom: 5px; letter-spacing: -0.5px; }
+  .modal-sub   { color: var(--text-muted); font-size: .79rem; margin-bottom: 25px; }
+
+  .modal-rank-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 13px; border-radius: 7px;
+    font-weight: 700; font-size: .77rem; margin-bottom: 18px;
+  }
+
+  .input-group { margin-bottom: 18px; }
+  .input-group label { display: block; font-weight: 600; font-size: .77rem; margin-bottom: 7px; color: var(--text); }
+  .input-group input {
+    width: 100%; padding: 12px 14px;
+    border: 2px solid var(--border); border-radius: 11px;
+    font-family: 'Poppins', sans-serif; font-size: .86rem; color: var(--text);
+    background: var(--bg); outline: none; transition: border-color .2s;
+  }
+  .input-group input:focus { border-color: var(--orange); }
+
+  .modal-price {
+    background: linear-gradient(135deg, rgba(255,159,67,0.1), rgba(255,183,77,0.05));
+    border: 1px solid rgba(255,159,67,0.2); border-radius: 11px; padding: 13px 14px;
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 22px;
+  }
+  .modal-price-label { font-size: .77rem; color: var(--text-muted); }
+  .modal-price-value { font-size: 1.17rem; font-weight: 800; color: var(--orange); }
+
+  .modal-note { font-size: .68rem; color: var(--text-muted); text-align: center; margin-top: 11px; }
+
+  /* ── FOOTER ── */
+  footer { background: #1A1A2E; color: rgba(255,255,255,0.7); padding: 54px 5% 27px; }
+  .footer-top { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 36px; margin-bottom: 43px; }
+  .footer-brand .nav-logo { margin-bottom: 11px; display: inline-flex; }
+  .footer-brand p { font-size: .77rem; line-height: 1.7; color: rgba(255,255,255,0.5); }
+  .footer-col h4 { font-size: .86rem; font-weight: 700; color: #fff; margin-bottom: 14px; }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+  .footer-col a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: .77rem; transition: color .2s; }
+  .footer-col a:hover { color: var(--orange); }
+
+  .social-links { display: flex; gap: 11px; margin-top: 18px; }
+  .social-link {
+    width: 34px; height: 34px; border-radius: 9px;
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(255,255,255,0.6); font-size: .86rem;
+    text-decoration: none; transition: all .25s;
+  }
+  .social-link:hover { background: var(--orange); color: #fff; border-color: var(--orange); transform: translateY(-3px); }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.08); padding-top: 25px;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 11px;
+  }
+  .footer-bottom p { font-size: .74rem; color: rgba(255,255,255,0.35); }
+  .footer-bottom a { color: rgba(255,255,255,0.5); text-decoration: none; }
+  .footer-bottom a:hover { color: var(--orange); }
+
+  /* ── SCROLL ANIMATIONS ── */
+  .fade-up {
+    opacity: 0; transform: translateY(27px);
+    transition: opacity .65s ease, transform .65s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1100px) { .ranks-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 768px) {
+    .nav-links {
+      display: none; flex-direction: column;
+      position: absolute; top: 63px; left: 0; right: 0;
+      background: rgba(255,255,255,0.97); backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border); padding: 18px 5%; gap: 18px;
+    }
+    .nav-links.open { display: flex; }
+    .hamburger { display: flex; }
+    .ranks-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-top { grid-template-columns: 1fr; gap: 29px; }
+    .footer-bottom { flex-direction: column; text-align: center; }
+    .hero-stats { gap: 22px; }
+  }
+  @media (max-width: 480px) {
+    .ranks-grid { grid-template-columns: 1fr; }
+    .modal { padding: 25px 18px; }
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: rgba(255,159,67,0.4); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--orange); }
+</style>
+</head>
+<body>
+
+<!-- ══════════════ NAVBAR ══════════════ -->
+<nav id="navbar">
+  <a href="#home" class="nav-logo"><i class="fas fa-cube"></i> Minecraft Сервері</a>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#home">Басты бет</a></li>
+    <li><a href="#shop">Дүкен</a></li>
+    <li><a href="#rules">Ережелер</a></li>
+    <li><a href="#wiki">Вики</a></li>
+    <li><a href="#discord">Дискорд</a></li>
+    <li><a href="#discord" class="btn btn-primary"><i class="fab fa-discord"></i> Ойнай бастау</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Мәзір">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- ══════════════ HERO ══════════════ -->
+<section id="home">
+  <div class="hero-bg"></div>
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Сервер желіде &nbsp;•&nbsp; Minecraft 1.21
+    </div>
+
+    <h1 class="hero-title">
+      Ең үздік<br>
+      <span class="accent">Minecraft</span><br>
+      тәжірибесіне қош келдіңіз
+    </h1>
+
+    <p class="hero-sub">
+      Мыңдаған ойыншылармен бірге эпикалық шытырман оқиғаға қатысыңыз. Аймақтағы ең бай мүмкіндіктері бар серверде салыңыз, тіршілік етіңіз және жаулап алыңыз.
+    </p>
+
+    <div class="ip-widget">
+      <span class="ip-label">СЕРВЕР IP</span>
+      <span class="ip-address">play.SubWorld.com</span>
+      <button id="copy-btn" onclick="copyIP()">
+        <i class="far fa-copy" id="copy-icon"></i>
+        <span id="copy-text">Көшіру</span>
+      </button>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num"><span class="orange" id="player-count">647</span></div>
+        <div class="stat-label">Ойыншы желіде</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">24/7</div>
+        <div class="stat-label">Жұмыс уақыты</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">4</div>
+        <div class="stat-label">Ойын режимі</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">5</div>
+        <div class="stat-label">Түрлі донат</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════ SHOP ══════════════ -->
+<section id="shop">
+  <div class="section-header fade-up">
+    <span class="section-tag"><i class="fas fa-crown"></i> Артықшылықтар</span>
+    <h2 class="section-title">Сервер дәрежелері мен артықшылықтары</h2>
+    <p class="section-sub">Ерекше мүмкіндіктерді ашыңыз және серверді қолдаңыз. Өзіңізге сәйкес дәрежені таңдаңыз.</p>
+  </div>
+
+  <div class="ranks-grid">
+
+    <!-- TIER 1 – Директор -->
+    <div class="rank-card tier-1 fade-up">
+      <div class="rank-icon"><i class="fas fa-user-tie"></i></div>
+      <div class="rank-name">Директор</div>
+      <div class="rank-desc">Жаңадан бастаушыларға арналған бастапқы дәреже</div>
+      <div class="price-block">
+        <div class="price-num">490 ₸</div>
+        <div class="price-period">бір рет сатып алу</div>
+      </div>
+      <hr class="divider">
+      <ul class="perks">
+        <li class="perk"><i class="fas fa-check"></i> Лақап ат түсі (Сұр)</li>
+        <li class="perk"><i class="fas fa-check"></i> Лоббиде /fly командасы</li>
+        <li class="perk"><i class="fas fa-check"></i> Күнде 2× бонус монеталары</li>
+        <li class="perk"><i class="fas fa-check"></i> [Директор] чат префиксі</li>
+        <li class="perk"><i class="fas fa-check"></i> 1 жеке үй нүктесі</li>
+      </ul>
+      <button class="btn-buy" onclick="openModal('Директор','490 ₸','#78909C','fas fa-user-tie')">
+        <i class="fas fa-shopping-cart"></i> Сатып алу
+      </button>
+    </div>
+
+    <!-- TIER 2 – Әкім -->
+    <div class="rank-card tier-2 fade-up">
+      <div class="rank-icon"><i class="fas fa-shield-halved"></i></div>
+      <div class="rank-name">Әкім</div>
+      <div class="rank-desc">Белсенді ойыншыларға арналған жетілдірілген артықшылықтар</div>
+      <div class="price-block">
+        <div class="price-num">990 ₸</div>
+        <div class="price-period">бір рет сатып алу</div>
+      </div>
+      <hr class="divider">
+      <ul class="perks">
+        <li class="perk"><i class="fas fa-check"></i> Директор дәрежесіндегі барлығы</li>
+        <li class="perk"><i class="fas fa-check"></i> Чатта жасыл префикс</li>
+        <li class="perk"><i class="fas fa-check"></i> /nick командасы</li>
+        <li class="perk"><i class="fas fa-check"></i> 3 жеке үй нүктесі</li>
+        <li class="perk"><i class="fas fa-check"></i> Күнде 3× бонус монеталары</li>
+        <li class="perk"><i class="fas fa-check"></i> Кіру кезегінде басымдық</li>
+      </ul>
+      <button class="btn-buy" onclick="openModal('Әкім','990 ₸','#66BB6A','fas fa-shield-halved')">
+        <i class="fas fa-shopping-cart"></i> Сатып алу
+      </button>
+    </div>
+
+    <!-- TIER 3 – Кіші-Админ (дұрыс орны – арзанырақ) -->
+    <div class="rank-card tier-3 fade-up">
+      <div class="popular-badge"><i class="fas fa-fire"></i> Танымал таңдау</div>
+      <div class="rank-icon"><i class="fas fa-star"></i></div>
+      <div class="rank-name">Кіші-Админ</div>
+      <div class="rank-desc">Серьезді ойыншыларға арналған кеңейтілген басқару</div>
+      <div class="price-block">
+        <div class="price-num">1 990 ₸</div>
+        <div class="price-period">бір рет сатып алу</div>
+      </div>
+      <hr class="divider">
+      <ul class="perks">
+        <li class="perk"><i class="fas fa-check"></i> Әкім дәрежесіндегі барлығы</li>
+        <li class="perk"><i class="fas fa-check"></i> Қызғылт сары [Кіші-Админ] префикс</li>
+        <li class="perk"><i class="fas fa-check"></i> /gamemode creative (жеке учаскеде)</li>
+        <li class="perk"><i class="fas fa-check"></i> 5 үй нүктесі</li>
+        <li class="perk"><i class="fas fa-check"></i> Эксклюзивті аренаға кіру</li>
+        <li class="perk"><i class="fas fa-check"></i> Күнде 5× бонус монеталары</li>
+        <li class="perk"><i class="fas fa-check"></i> 12 сайын жинақ (Kit)</li>
+      </ul>
+      <button class="btn-buy" onclick="openModal('Кіші-Админ','1 990 ₸','#FF9F43','fas fa-star')">
+        <i class="fas fa-shopping-cart"></i> Сатып алу
+      </button>
+    </div>
+
+    <!-- TIER 4 – Бас-Админ (дұрыс орны – қымбатырақ) -->
+    <div class="rank-card tier-4 fade-up">
+      <div class="rank-icon"><i class="fas fa-gem"></i></div>
+      <div class="rank-name">Бас-Админ</div>
+      <div class="rank-desc">Сирек кездесетін артықшылықтары бар премиум тәжірибе</div>
+      <div class="price-block">
+        <div class="price-num">3 490 ₸</div>
+        <div class="price-period">бір рет сатып алу</div>
+      </div>
+      <hr class="divider">
+      <ul class="perks">
+        <li class="perk"><i class="fas fa-check"></i> Кіші-Админ дәрежесіндегі барлығы</li>
+        <li class="perk"><i class="fas fa-check"></i> Күлгін градиент префикс</li>
+        <li class="perk"><i class="fas fa-check"></i> Жеке учаскеде ban & kick</li>
+        <li class="perk"><i class="fas fa-check"></i> Шексіз үй нүктелері</li>
+        <li class="perk"><i class="fas fa-check"></i> Эксклюзивті косметика жиыны</li>
+        <li class="perk"><i class="fas fa-check"></i> Күнде 10× бонус монеталары</li>
+        <li class="perk"><i class="fas fa-check"></i> Жеке арал әлемі</li>
+        <li class="perk"><i class="fas fa-check"></i> Discord VIP арнасына кіру</li>
+      </ul>
+      <button class="btn-buy" onclick="openModal('Бас-Админ','3 490 ₸','#AB47BC','fas fa-gem')">
+        <i class="fas fa-shopping-cart"></i> Сатып алу
+      </button>
+    </div>
+
+    <!-- TIER 5 – Консоль (оптимизацияланған) -->
+    <div class="rank-card tier-5 fade-up">
+      <div class="popular-badge"><i class="fas fa-crown"></i> Ең жоғары</div>
+      <div class="rank-icon"><i class="fas fa-terminal"></i></div>
+      <div class="rank-name">Консоль</div>
+      <div class="rank-desc">Шексіз билік. Серверде ең жоғары дәреже.</div>
+      <div class="price-block">
+        <div class="price-num">6 990 ₸</div>
+        <div class="price-period">бір рет сатып алу</div>
+      </div>
+      <hr class="divider">
+      <ul class="perks">
+        <li class="perk"><i class="fas fa-check"></i> Сервердегі барлық командаларға рұқсат</li>
+        <li class="perk"><i class="fas fa-check"></i> Анимациялы алтын [Консоль] префикс</li>
+        <li class="perk"><i class="fas fa-check"></i> Серверде толық ban/kick өкілеттілігі</li>
+        <li class="perk"><i class="fas fa-check"></i> Тұрақты 2000× монета</li>
+        <li class="perk"><i class="fas fa-check"></i> Кіргенде жеке хабарлама + ай сайын сырлы жәшік</li>
+      </ul>
+      <button class="btn-buy" onclick="openModal('Консоль','6 990 ₸','#FFD700','fas fa-terminal',true)">
+        <i class="fas fa-crown"></i> Сатып алу
+      </button>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════ FOOTER ══════════════ -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#home" class="nav-logo"><i class="fas fa-cube"></i> Minecraft Сервері</a>
+      <p>Аймақтағы ең үздік Minecraft тәжірибесі. Мыңдаған ойыншылармен бірге қосылыңыз және серверде өз тарихыңызды жазыңыз.</p>
+      <div class="social-links">
+        <a href="#discord" class="social-link" aria-label="Discord"><i class="fab fa-discord"></i></a>
+        <a href="#" class="social-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="#" class="social-link" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+        <a href="#" class="social-link" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
+        <a href="#" class="social-link" aria-label="Twitter/X"><i class="fab fa-x-twitter"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Навигация</h4>
+      <ul>
+        <li><a href="#home">Басты бет</a></li>
+        <li><a href="#shop">Дүкен</a></li>
+        <li><a href="#rules" id="rules">Ережелер</a></li>
+        <li><a href="#wiki" id="wiki">Вики</a></li>
+        <li><a href="#discord" id="discord">Дискорд</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Қолдау</h4>
+      <ul>
+        <li><a href="#">Қызмет шарттары</a></li>
+        <li><a href="#">Құпиялылық саясаты</a></li>
+        <li><a href="#">Қайтару саясаты</a></li>
+        <li><a href="#">Әкімшіге хабарласу</a></li>
+        <li><a href="#">Қате туралы хабарлау</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2025 Minecraft Сервері. Барлық құқықтар қорғалған. Mojang Studios-пен байланысы жоқ.</p>
+    <p><a href="#">Қызмет шарттары</a> &nbsp;·&nbsp; <a href="#">Құпиялылық саясаты</a></p>
+  </div>
+</footer>
+
+<!-- ══════════════ TOAST ══════════════ -->
+<div id="toast">
+  <i class="fas fa-circle-check"></i>
+  <span id="toast-msg">IP алмасу буферіне көшірілді!</span>
+</div>
+
+<!-- ══════════════ MODAL ══════════════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()" aria-label="Жабу"><i class="fas fa-times"></i></button>
+
+    <div class="modal-icon" id="modal-icon">
+      <i class="fas fa-crown" style="color:var(--orange)"></i>
+    </div>
+
+    <h2 class="modal-title">Дәреже сатып алу</h2>
+    <p class="modal-sub">Сатып алуды жалғастыру үшін Minecraft лақап атыңызды енгізіңіз.</p>
+
+    <div id="modal-rank-badge" class="modal-rank-badge">
+      <i class="fas fa-star"></i> <span id="modal-rank-name">Дәреже</span>
+    </div>
+
+    <div class="input-group">
+      <label for="nickname-input"><i class="fas fa-user" style="color:var(--orange)"></i> &nbsp;Minecraft лақап аты</label>
+      <input type="text" id="nickname-input" placeholder="мыс. Steve, Alex, Атыңыз..." maxlength="16" autocomplete="off">
+    </div>
+
+    <div class="modal-price">
+      <span class="modal-price-label">Жалпы баға</span>
+      <span class="modal-price-value" id="modal-price">—</span>
+    </div>
+
+    <button class="btn btn-primary" style="width:100%;justify-content:center;padding:13px;" onclick="proceedPurchase()">
+      <i class="fas fa-lock"></i> Төлемге өту
+    </button>
+
+    <p class="modal-note">
+      <i class="fas fa-shield-halved"></i>
+      Қауіпсіз төлем &nbsp;·&nbsp; Жедел жеткізу &nbsp;·&nbsp; 24/7 қолдау
+    </p>
+  </div>
+</div>
+
+<!-- ══════════════ JAVASCRIPT ══════════════ -->
+<script>
+  /* Navbar scroll */
+  window.addEventListener('scroll', () => {
+    document.getElementById('navbar').style.boxShadow = window.scrollY > 20
+      ? '0 4px 27px rgba(0,0,0,0.1)'
+      : '0 2px 18px rgba(0,0,0,0.06)';
+  });
+
+  /* Hamburger */
+  function toggleMenu() {
+    document.getElementById('hamburger').classList.toggle('open');
+    document.getElementById('nav-links').classList.toggle('open');
+  }
+
+  /* Copy IP */
+  function copyIP() {
+    const ip = 'play.myserver.com';
+    navigator.clipboard.writeText(ip).catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = ip; document.body.appendChild(ta);
+      ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    });
+    const btn  = document.getElementById('copy-btn');
+    const icon = document.getElementById('copy-icon');
+    const text = document.getElementById('copy-text');
+    btn.classList.add('copied');
+    icon.className = 'fas fa-circle-check';
+    text.textContent = 'Көшірілді!';
+    showToast('IP алмасу буферіне көшірілді!');
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      icon.className = 'far fa-copy';
+      text.textContent = 'Көшіру';
+    }, 2500);
+  }
+
+  /* Toast */
+  let toastTimer;
+  function showToast(msg) {
+    clearTimeout(toastTimer);
+    const t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    t.classList.add('show');
+    toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  /* Live player count */
+  (function() {
+    const el = document.getElementById('player-count');
+    let base = 1240;
+    setInterval(() => {
+      base = Math.max(1180, Math.min(1320, base + Math.floor(Math.random() * 9) - 4));
+      el.textContent = base.toLocaleString('ru-RU'); /* space separator */
+    }, 3000);
+  })();
+
+  /* Modal */
+  function openModal(name, price, color, icon, ultimate = false) {
+    const iconEl = document.getElementById('modal-icon');
+    iconEl.innerHTML = `<i class="${icon}" style="color:${color}"></i>`;
+    iconEl.style.background = ultimate
+      ? 'linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,165,0,0.1))'
+      : 'linear-gradient(135deg,rgba(255,159,67,0.15),rgba(255,183,77,0.1))';
+
+    const badge = document.getElementById('modal-rank-badge');
+    badge.style.cssText = `background:${color}20;color:${color};border:1px solid ${color}40`;
+    badge.innerHTML = `<i class="${icon}"></i> ${name}`;
+
+    document.getElementById('modal-price').textContent = price;
+    document.getElementById('modal-price').style.color = color;
+    document.getElementById('nickname-input').value = '';
+    document.getElementById('modal-overlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('nickname-input').focus(), 350);
+  }
+
+  function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('modal-overlay')) closeModal();
+  }
+
+  function proceedPurchase() {
+    const inp = document.getElementById('nickname-input');
+    const nick = inp.value.trim();
+    if (!nick) {
+      inp.style.borderColor = '#e53935'; inp.focus();
+      setTimeout(() => inp.style.borderColor = '', 1500);
+      return;
+    }
+    closeModal();
+    showToast(`✓ "${nick}" үшін тапсырыс берілді – төлемге бағытталуда...`);
+  }
+
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  /* Scroll fade-up — all cards appear simultaneously, no stagger */
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -36px 0px' });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
