@@ -1,1 +1,562 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LIGACRAFT</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  :root {
+    --bg:       #f4f8f5;
+    --bg2:      #eaf3ec;
+    --card:     #ffffff;
+    --green:    #3dba6f;
+    --green2:   #2fa05d;
+    --green-lt: #e8f7ee;
+    --green-md: #c2e8ce;
+    --border:   #d4eadb;
+    --text:     #1e2d24;
+    --muted:    #6e9278;
+    --shadow:   0 2px 16px rgba(61,186,111,0.10);
+    --shadow2:  0 4px 24px rgba(61,186,111,0.16);
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Nunito', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content:'';
+    position: fixed; inset:0;
+    background-image: radial-gradient(circle, rgba(61,186,111,0.12) 1px, transparent 1px);
+    background-size: 28px 28px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top:0; left:0; right:0;
+    z-index: 1000;
+    background: rgba(255,255,255,0.93);
+    backdrop-filter: blur(16px);
+    border-bottom: 1.5px solid var(--border);
+    padding: 0 20px;
+    height: 62px;
+    display: flex; align-items: center; justify-content: space-between;
+    box-shadow: 0 2px 12px rgba(61,186,111,0.08);
+  }
+  .nav-brand { display:flex; align-items:center; gap:10px; }
+  .nav-brand-logo {
+    width:34px; height:34px; border-radius:9px;
+    object-fit:cover; border:1.5px solid var(--border);
+  }
+  .nav-title {
+    font-family:'Orbitron',monospace; font-weight:900;
+    font-size:1.1rem; color:var(--green2); letter-spacing:2px;
+  }
+  .hamburger {
+    background:var(--green-lt); border:1.5px solid var(--border);
+    border-radius:10px; padding:9px 11px;
+    cursor:pointer; display:flex; flex-direction:column; gap:5px;
+    transition: background 0.2s, border-color 0.2s;
+  }
+  .hamburger:hover { background:var(--green-md); border-color:var(--green); }
+  .hamburger span {
+    display:block; width:20px; height:2px;
+    background:var(--green2); border-radius:2px; transition:all 0.3s;
+  }
+  .hamburger.active span:nth-child(1) { transform:rotate(45deg) translate(5px,5px); }
+  .hamburger.active span:nth-child(2) { opacity:0; }
+  .hamburger.active span:nth-child(3) { transform:rotate(-45deg) translate(5px,-5px); }
+
+  /* DRAWER */
+  .drawer {
+    position:fixed; top:62px; right:-280px;
+    width:260px; height:calc(100vh - 62px);
+    background:#ffffff; border-left:1.5px solid var(--border);
+    z-index:999; transition:right 0.35s cubic-bezier(.4,0,.2,1);
+    padding:24px 16px; display:flex; flex-direction:column; gap:6px;
+    box-shadow:-4px 0 24px rgba(61,186,111,0.08);
+  }
+  .drawer.open { right:0; }
+  .drawer-link {
+    display:flex; align-items:center; gap:12px;
+    padding:13px 16px; border-radius:12px;
+    border:1.5px solid transparent; cursor:pointer;
+    color:var(--muted); font-size:0.92rem; font-weight:700;
+    transition:all 0.2s; background:none; width:100%; text-align:left;
+  }
+  .drawer-link i { width:18px; text-align:center; color:var(--green); font-size:1rem; }
+  .drawer-link:hover, .drawer-link.active {
+    color:var(--green2); background:var(--green-lt); border-color:var(--border);
+  }
+  .overlay {
+    position:fixed; inset:0; background:rgba(30,45,36,0.18);
+    z-index:998; opacity:0; pointer-events:none; transition:opacity 0.3s;
+  }
+  .overlay.show { opacity:1; pointer-events:all; }
+
+  /* PAGES */
+  .page { display:none; padding:78px 18px 36px; min-height:100vh; position:relative; z-index:1; animation:fadeUp 0.38s ease; }
+  .page.active { display:block; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px);} to{opacity:1;transform:translateY(0);} }
+
+  /* SECTION TITLE */
+  .section-title {
+    font-family:'Orbitron',monospace; font-size:0.78rem;
+    letter-spacing:3px; color:var(--green2); text-transform:uppercase;
+    margin-bottom:18px; display:flex; align-items:center; gap:10px;
+  }
+  .section-title i { font-size:1rem; }
+  .section-title::after { content:''; flex:1; height:1.5px; background:linear-gradient(90deg,var(--green-md),transparent); }
+
+  /* HOME */
+  .hero { text-align:center; padding:30px 0 28px; }
+  .hero-logo { width:88px; height:88px; border-radius:22px; object-fit:cover; margin:0 auto 18px; display:block; border:2px solid var(--border); box-shadow:var(--shadow2); }
+  .hero-badge {
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--green-lt); border:1.5px solid var(--green-md);
+    color:var(--green2); font-size:0.68rem; letter-spacing:2px;
+    padding:5px 14px; border-radius:20px; margin-bottom:18px;
+    font-family:'Orbitron',monospace; text-transform:uppercase;
+  }
+  .hero h1 { font-family:'Orbitron',monospace; font-weight:900; font-size:clamp(2rem,9vw,3.6rem); line-height:1.1; color:var(--text); margin-bottom:10px; }
+  .hero h1 span { color:var(--green); }
+  .hero-sub { color:var(--muted); font-size:0.92rem; line-height:1.65; margin-bottom:28px; max-width:300px; margin-left:auto; margin-right:auto; font-weight:600; }
+
+  .ip-box {
+    background:var(--card); border:1.5px solid var(--border);
+    border-radius:16px; padding:18px 20px; margin-bottom:22px;
+    box-shadow:var(--shadow); position:relative; overflow:hidden;
+  }
+  .ip-box::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--green),#7fe3a8); border-radius:3px 3px 0 0; }
+  .ip-label { display:flex; align-items:center; gap:7px; font-size:0.65rem; letter-spacing:2px; color:var(--green2); font-family:'Orbitron',monospace; margin-bottom:6px; text-transform:uppercase; }
+  .ip-label i { font-size:0.8rem; }
+  .ip-value { font-family:'Orbitron',monospace; font-size:0.9rem; color:var(--text); letter-spacing:0.5px; font-weight:700; }
+  .ip-tag { display:flex; align-items:center; gap:6px; font-size:0.7rem; color:var(--muted); margin-top:5px; font-weight:600; }
+  .ip-tag i { font-size:0.78rem; color:var(--green); }
+
+  .stats-row { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-bottom:20px; }
+  .stat-card { background:var(--card); border:1.5px solid var(--border); border-radius:14px; padding:16px 10px; text-align:center; box-shadow:var(--shadow); }
+  .stat-card i { font-size:1.3rem; color:var(--green); display:block; margin-bottom:6px; }
+  .stat-num { font-family:'Orbitron',monospace; font-size:1.55rem; font-weight:900; color:var(--green2); display:block; margin-bottom:3px; }
+  .stat-lbl { font-size:0.62rem; color:var(--muted); letter-spacing:1px; text-transform:uppercase; font-weight:700; }
+
+  .version-pill { display:inline-flex; align-items:center; gap:8px; background:var(--card); border:1.5px solid var(--border); color:var(--text); border-radius:30px; padding:9px 20px; font-size:0.78rem; font-family:'Orbitron',monospace; letter-spacing:1px; box-shadow:var(--shadow); font-weight:700; }
+  .version-pill i { color:var(--green); }
+
+  /* TEAMS */
+  .team-card {
+    background:var(--card); border:1.5px solid var(--border);
+    border-radius:16px; padding:18px 16px; margin-bottom:12px;
+    display:flex; align-items:center; gap:14px;
+    transition:all 0.22s; box-shadow:var(--shadow);
+    position:relative; overflow:hidden; cursor:pointer;
+  }
+  .team-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--green); opacity:0; transition:opacity 0.2s; border-radius:4px 0 0 4px; }
+  .team-card:hover { border-color:var(--green); transform:translateX(4px); box-shadow:var(--shadow2); }
+  .team-card:hover::before { opacity:1; }
+  .team-logo { width:54px; height:54px; border-radius:13px; background:var(--green-lt); border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0; }
+  .team-logo img { width:100%; height:100%; object-fit:cover; border-radius:12px; }
+  .team-logo i { font-size:1.5rem; color:var(--green); }
+  .team-info { flex:1; }
+  .team-name { font-family:'Orbitron',monospace; font-size:0.82rem; font-weight:700; color:var(--text); margin-bottom:4px; letter-spacing:0.5px; }
+  .team-meta { display:flex; align-items:center; gap:6px; font-size:0.72rem; color:var(--muted); font-weight:600; }
+  .team-meta i { font-size:0.7rem; color:var(--green); }
+  .team-num { font-family:'Orbitron',monospace; font-size:1.3rem; font-weight:900; color:var(--green-md); }
+
+  /* SCHEDULE */
+  .match-card { background:var(--card); border:1.5px solid var(--border); border-radius:14px; padding:18px 16px; margin-bottom:12px; box-shadow:var(--shadow); }
+  .match-round { display:flex; align-items:center; gap:6px; font-size:0.62rem; letter-spacing:2px; color:var(--green2); font-family:'Orbitron',monospace; text-transform:uppercase; margin-bottom:13px; font-weight:700; }
+  .match-round i { font-size:0.75rem; }
+  .match-teams { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .match-team { font-size:0.82rem; font-weight:800; text-align:center; flex:1; color:var(--text); }
+  .match-vs { background:var(--green-lt); border:1.5px solid var(--green-md); border-radius:9px; padding:6px 12px; font-family:'Orbitron',monospace; font-size:0.65rem; color:var(--green2); flex-shrink:0; font-weight:700; }
+  .match-status { display:flex; align-items:center; justify-content:center; gap:6px; font-size:0.68rem; color:var(--muted); margin-top:12px; font-weight:600; }
+  .match-status i { font-size:0.75rem; color:var(--green); }
+
+  /* STANDINGS */
+  .standings-wrap { background:var(--card); border:1.5px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:var(--shadow); }
+  .standings-table { width:100%; border-collapse:collapse; font-size:0.82rem; }
+  .standings-table thead { background:var(--green-lt); }
+  .standings-table th { font-family:'Orbitron',monospace; font-size:0.52rem; letter-spacing:1.5px; color:var(--green2); text-transform:uppercase; padding:11px 8px; text-align:center; border-bottom:1.5px solid var(--border); }
+  .standings-table th:nth-child(2) { text-align:left; }
+  .standings-table td { padding:13px 8px; text-align:center; border-bottom:1px solid var(--bg2); color:var(--text); font-weight:700; }
+  .standings-table td:nth-child(2) { text-align:left; }
+  .standings-table tr:last-child td { border-bottom:none; }
+  .standings-table tr:hover td { background:var(--bg2); }
+  .rank-badge { display:inline-flex; align-items:center; justify-content:center; width:24px; height:24px; border-radius:7px; background:var(--green-lt); color:var(--green2); font-family:'Orbitron',monospace; font-size:0.65rem; font-weight:800; }
+  .pts-cell { color:var(--green2) !important; font-family:'Orbitron',monospace; }
+  .legend { margin-top:12px; padding:12px 16px; background:var(--card); border:1.5px solid var(--border); border-radius:12px; font-size:0.72rem; color:var(--muted); line-height:2; display:flex; flex-wrap:wrap; gap:4px 18px; box-shadow:var(--shadow); }
+  .legend span { display:flex; align-items:center; gap:5px; font-weight:600; }
+  .legend i { color:var(--green); font-size:0.7rem; }
+
+  /* RULES */
+  .rule-item { background:var(--card); border:1.5px solid var(--border); border-radius:14px; padding:18px 16px; margin-bottom:12px; display:flex; gap:14px; align-items:flex-start; box-shadow:var(--shadow); }
+  .rule-icon-wrap { width:42px; height:42px; border-radius:12px; background:var(--green-lt); border:1.5px solid var(--green-md); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .rule-icon-wrap i { font-size:1.1rem; color:var(--green2); }
+  .rule-title { font-family:'Orbitron',monospace; font-size:0.7rem; color:var(--green2); letter-spacing:1px; margin-bottom:5px; text-transform:uppercase; font-weight:700; }
+  .rule-text { font-size:0.84rem; color:var(--muted); line-height:1.65; font-weight:600; }
+
+  /* ABOUT */
+  .about-hero { text-align:center; padding:28px 0 22px; }
+  .about-logo { width:88px; height:88px; border-radius:22px; object-fit:cover; margin:0 auto 18px; display:block; border:2px solid var(--border); box-shadow:var(--shadow2); }
+  .about-logo-fallback { width:88px; height:88px; border-radius:22px; background:var(--green-lt); border:2px solid var(--border); display:none; align-items:center; justify-content:center; margin:0 auto 18px; box-shadow:var(--shadow2); }
+  .about-logo-fallback i { font-size:2.4rem; color:var(--green); }
+  .about-name { font-family:'Orbitron',monospace; font-size:1.7rem; font-weight:900; color:var(--text); margin-bottom:8px; }
+  .about-name span { color:var(--green); }
+  .about-desc { color:var(--muted); font-size:0.88rem; line-height:1.7; margin-bottom:26px; font-weight:600; }
+  .about-card { background:var(--card); border:1.5px solid var(--border); border-radius:14px; padding:16px 18px; margin-bottom:12px; box-shadow:var(--shadow); display:flex; align-items:center; gap:14px; }
+  .about-card-icon { width:38px; height:38px; border-radius:10px; background:var(--green-lt); border:1.5px solid var(--green-md); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .about-card-icon i { font-size:1rem; color:var(--green2); }
+  .about-card-title { font-size:0.62rem; letter-spacing:1.5px; color:var(--muted); font-family:'Orbitron',monospace; text-transform:uppercase; margin-bottom:3px; font-weight:700; }
+  .about-card-val { font-size:0.88rem; color:var(--text); font-weight:700; }
+
+  .pb { padding-bottom:40px; }
+
+  /* ROSTER */
+  .team-wrap { margin-bottom:12px; }
+  .team-wrap .team-card { margin-bottom:0; border-radius:16px; cursor:pointer; user-select:none; }
+  .team-wrap .team-card.open { border-bottom-left-radius:0; border-bottom-right-radius:0; border-bottom-color:transparent; }
+  .roster-arrow { color:var(--muted); font-size:0.8rem; transition:transform 0.3s; flex-shrink:0; }
+  .team-card.open .roster-arrow { transform:rotate(180deg); color:var(--green); }
+
+  .roster {
+    max-height:0; overflow:hidden;
+    background:var(--card);
+    border:1.5px solid var(--border); border-top:none;
+    border-bottom-left-radius:16px; border-bottom-right-radius:16px;
+    transition:max-height 0.38s cubic-bezier(.4,0,.2,1);
+    box-shadow:var(--shadow);
+  }
+  .roster.open { max-height:600px; }
+
+  .roster-player {
+    display:flex; align-items:center; gap:10px;
+    padding:11px 18px; font-size:0.86rem; font-weight:700;
+    color:var(--text); border-bottom:1px solid var(--bg2);
+  }
+  .roster-player:last-child { border-bottom:none; }
+  .roster-player i { color:var(--green); font-size:0.85rem; }
+  .roster-player.suspended { color:var(--muted); }
+  .roster-player.suspended i { color:#e6a817; }
+
+  .p-num {
+    font-family:'Orbitron',monospace; font-size:0.62rem; font-weight:800;
+    color:var(--muted); background:var(--green-lt);
+    border:1px solid var(--green-md); border-radius:6px;
+    padding:2px 6px; min-width:24px; text-align:center;
+  }
+  .badge-suspended {
+    margin-left:auto; background:rgba(230,168,23,0.12);
+    border:1px solid rgba(230,168,23,0.3); color:#c98a00;
+    font-size:0.62rem; border-radius:20px; padding:2px 9px;
+    display:inline-flex; align-items:center; gap:4px; font-weight:700;
+  }
+  .badge-suspended i { font-size:0.62rem; color:#c98a00; }
+  .roster-empty { color:var(--muted); font-style:italic; justify-content:center; font-weight:600; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <img src="images/ligacraft_general_logo.png" class="nav-brand-logo" onerror="this.style.display='none'" alt="Ligacraft">
+    <span class="nav-title">LIGACRAFT</span>
+  </div>
+  <button class="hamburger" id="menuBtn" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div class="overlay" id="overlay" onclick="closeMenu()"></div>
+
+<div class="drawer" id="drawer">
+  <button class="drawer-link active" onclick="showPage('home',this)"><i class="fa-solid fa-house"></i> Басты бет</button>
+  <button class="drawer-link" onclick="showPage('teams',this)"><i class="fa-solid fa-shield-halved"></i> Командалар</button>
+  <button class="drawer-link" onclick="showPage('schedule',this)"><i class="fa-solid fa-calendar-days"></i> Кесте</button>
+  <button class="drawer-link" onclick="showPage('standings',this)"><i class="fa-solid fa-trophy"></i> Таблица</button>
+  <button class="drawer-link" onclick="showPage('rules',this)"><i class="fa-solid fa-book-open"></i> Ережелер</button>
+  <button class="drawer-link" onclick="showPage('about',this)"><i class="fa-solid fa-circle-info"></i>Жоба туралы</button>
+</div>
+
+<!-- HOME -->
+<div class="page active" id="page-home">
+  <div class="hero">
+    <img src="images/ligacraft_general_logo.png" class="hero-logo" onerror="this.style.display='none'" alt="Ligacraft">
+    <div class="hero-badge"><i class="fa-solid fa-bolt"></i> Season 1 — 2025</div>
+    <h1>LIGA<span>CRAFT</span></h1>
+    <p class="hero-sub">Майнкрафттағы ең қызықты футбол лигасы. 5 клуб, 1 чемпион!</p>
+    <div class="ip-box">
+      <div class="ip-label"><i class="fa-solid fa-server"></i> Сервер IP</div>
+      <div class="ip-value">Footballmatch.aternos.me</div>
+      <div class="ip-tag"><i class="fa-brands fa-minecraft"></i> Minecraft Bedrock Edition</div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><i class="fa-solid fa-shield-halved"></i><span class="stat-num">5</span><span class="stat-lbl">Клуб</span></div>
+      <div class="stat-card"><i class="fa-solid fa-users"></i><span class="stat-num">25</span><span class="stat-lbl">Ойыншы</span></div>
+      <div class="stat-card"><i class="fa-solid fa-trophy"></i><span class="stat-num">1</span><span class="stat-lbl">Чемпион</span></div>
+    </div>
+    <div class="version-pill"><i class="fa-brands fa-minecraft"></i> Minecraft Bedrock 1.21.80.03</div>
+  </div>
+</div>
+
+<!-- TEAMS -->
+<div class="page pb" id="page-teams">
+  <div class="section-title"><i class="fa-solid fa-shield-halved"></i> Командалар</div>
+
+  <!-- FC SHALKAR -->
+  <div class="team-wrap">
+    <div class="team-card" onclick="toggleRoster('r1',this)">
+      <div class="team-logo"><img src="images/shalqar.png" alt="FC Shalkar" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><i class="fa-solid fa-futbol" style="display:none"></i></div>
+      <div class="team-info">
+        <div class="team-name">FC Shalkar</div>
+        <div class="team-meta"><i class="fa-solid fa-users"></i> 6 ойыншы &nbsp;&middot;&nbsp; <i class="fa-solid fa-rotate"></i> Замена бар</div>
+      </div>
+      <i class="fa-solid fa-chevron-down roster-arrow"></i>
+    </div>
+    <div class="roster" id="r1">
+      <div class="roster-player"><span class="p-num">1</span><i class="fa-solid fa-user"></i> TotallyNotZoro</div>
+      <div class="roster-player"><span class="p-num">2</span><i class="fa-solid fa-user"></i> Kron</div>
+      <div class="roster-player"><span class="p-num">3</span><i class="fa-solid fa-user"></i> Eldos</div>
+      <div class="roster-player"><span class="p-num">4</span><i class="fa-solid fa-user"></i> Dervin</div>
+      <div class="roster-player"><span class="p-num">5</span><i class="fa-solid fa-user"></i> Nurgisa</div>
+      <div class="roster-player"><span class="p-num">6</span><i class="fa-solid fa-user"></i> Nurik</div>
+    </div>
+  </div>
+
+  <!-- MANCHESTER UNITED -->
+  <div class="team-wrap">
+    <div class="team-card" onclick="toggleRoster('r2',this)">
+      <div class="team-logo"><img src="images/united_logo.png" alt="Manchester United" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><i class="fa-solid fa-futbol" style="display:none"></i></div>
+      <div class="team-info">
+        <div class="team-name">Manchester United</div>
+        <div class="team-meta"><i class="fa-solid fa-users"></i> 8 ойыншы &nbsp;&middot;&nbsp; <i class="fa-solid fa-rotate"></i> Замена бар</div>
+      </div>
+      <i class="fa-solid fa-chevron-down roster-arrow"></i>
+    </div>
+    <div class="roster" id="r2">
+      <div class="roster-player"><span class="p-num">1</span><i class="fa-solid fa-user"></i> Alikhan</div>
+      <div class="roster-player"><span class="p-num">2</span><i class="fa-solid fa-user"></i> Nurka</div>
+      <div class="roster-player"><span class="p-num">3</span><i class="fa-solid fa-user"></i> Kuka</div>
+      <div class="roster-player"><span class="p-num">4</span><i class="fa-solid fa-user"></i> Asko</div>
+      <div class="roster-player"><span class="p-num">5</span><i class="fa-solid fa-user"></i> Ako</div>
+      <div class="roster-player"><span class="p-num">6</span><i class="fa-solid fa-user"></i> Zart</div>
+      <div class="roster-player"><span class="p-num">7</span><i class="fa-solid fa-user"></i> Serikov</div>
+      <div class="roster-player suspended"><span class="p-num">8</span><i class="fa-solid fa-user-clock"></i> Keyza <span class="badge-suspended"><i class="fa-solid fa-hourglass-half"></i></span></div>
+    </div>
+  </div>
+
+  <!-- FC ARYSTAN -->
+  <div class="team-wrap">
+    <div class="team-card" onclick="toggleRoster('r3',this)">
+      <div class="team-logo"><img src="images/arystan_logo.png" alt="FC Arystan" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><i class="fa-solid fa-futbol" style="display:none"></i></div>
+      <div class="team-info">
+        <div class="team-name">FC Arystan</div>
+        <div class="team-meta"><i class="fa-solid fa-users"></i> 6 ойыншы &nbsp;&middot;&nbsp; <i class="fa-solid fa-rotate"></i> Замена бар</div>
+      </div>
+      <i class="fa-solid fa-chevron-down roster-arrow"></i>
+    </div>
+    <div class="roster" id="r3">
+      <div class="roster-player"><span class="p-num">1</span><i class="fa-solid fa-user"></i> Madik</div>
+      <div class="roster-player"><span class="p-num">2</span><i class="fa-solid fa-user"></i> Purbe</div>
+      <div class="roster-player"><span class="p-num">3</span><i class="fa-solid fa-user"></i> Kaus</div>
+      <div class="roster-player"><span class="p-num">4</span><i class="fa-solid fa-user"></i> Alikhon</div>
+      <div class="roster-player"><span class="p-num">5</span><i class="fa-solid fa-user"></i> Miko</div>
+      <div class="roster-player"><span class="p-num">6</span><i class="fa-solid fa-user"></i> Flody</div>
+    </div>
+  </div>
+
+  <!-- FC ÖZLEM -->
+  <div class="team-wrap">
+    <div class="team-card" onclick="toggleRoster('r4',this)">
+      <div class="team-logo"><img src="images/uzlem_logo.png" alt="FC Özlem" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><i class="fa-solid fa-futbol" style="display:none"></i></div>
+      <div class="team-info">
+        <div class="team-name">FC Özlem</div>
+        <div class="team-meta"><i class="fa-solid fa-users"></i> 8 ойыншы &nbsp;&middot;&nbsp; <i class="fa-solid fa-rotate"></i> Замена бар</div>
+      </div>
+      <i class="fa-solid fa-chevron-down roster-arrow"></i>
+    </div>
+    <div class="roster" id="r4">
+      <div class="roster-player"><span class="p-num">1</span><i class="fa-solid fa-user"></i> Saginish</div>
+      <div class="roster-player"><span class="p-num">2</span><i class="fa-solid fa-user"></i> Beytanys</div>
+      <div class="roster-player"><span class="p-num">3</span><i class="fa-solid fa-user"></i> Neighbour</div>
+      <div class="roster-player"><span class="p-num">4</span><i class="fa-solid fa-user"></i> Yasin</div>
+      <div class="roster-player"><span class="p-num">5</span><i class="fa-solid fa-user"></i> Jako</div>
+      <div class="roster-player"><span class="p-num">6</span><i class="fa-solid fa-user"></i> Rahman</div>
+      <div class="roster-player"><span class="p-num">7</span><i class="fa-solid fa-user"></i> Balkibayev</div>
+      <div class="roster-player"><span class="p-num">8</span><i class="fa-solid fa-user"></i> Taibek</div>
+    </div>
+  </div>
+
+  <!-- REAL MADRID -->
+  <div class="team-wrap">
+    <div class="team-card" onclick="toggleRoster('r5',this)">
+      <div class="team-logo"><img src="images/madrid_logo.png" alt="Real Madrid" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><i class="fa-solid fa-futbol" style="display:none"></i></div>
+      <div class="team-info">
+        <div class="team-name">Real Madrid</div>
+        <div class="team-meta"><i class="fa-solid fa-users"></i> 5 ойыншы &nbsp;&middot;&nbsp; <i class="fa-solid fa-rotate"></i> Замена бар</div>
+      </div>
+      <i class="fa-solid fa-chevron-down roster-arrow"></i>
+    </div>
+    <div class="roster" id="r5">
+      <div class="roster-player roster-empty"><i class="fa-solid fa-circle-info"></i> Ойыншылар тізімі толтырылмаған</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCHEDULE -->
+<div class="page pb" id="page-schedule">
+  <div class="section-title"><i class="fa-solid fa-calendar-days"></i> Матчтар кестесі</div>
+
+  <div class="match-card">
+    <div class="match-round"><i class="fa-solid fa-circle-dot"></i> 1-тур</div>
+    <div class="match-teams"><div class="match-team">FC Shalkar</div><div class="match-vs">VS</div><div class="match-team">Manchester United</div></div>
+    <div class="match-status"><i class="fa-regular fa-clock"></i> Күтілуде</div>
+  </div>
+  <div class="match-card">
+    <div class="match-round"><i class="fa-solid fa-circle-dot"></i> 1-тур</div>
+    <div class="match-teams"><div class="match-team">FC Arystan</div><div class="match-vs">VS</div><div class="match-team">Real Madrid</div></div>
+    <div class="match-status"><i class="fa-regular fa-clock"></i> Күтілуде</div>
+  </div>
+  <div class="match-card">
+    <div class="match-round"><i class="fa-solid fa-circle-dot"></i> 2-тур</div>
+    <div class="match-teams"><div class="match-team">FC Özlem</div><div class="match-vs">VS</div><div class="match-team">FC Shalkar</div></div>
+    <div class="match-status"><i class="fa-regular fa-clock"></i> Күтілуде</div>
+  </div>
+  <div class="match-card">
+    <div class="match-round"><i class="fa-solid fa-circle-dot"></i> 2-тур</div>
+    <div class="match-teams"><div class="match-team">Manchester United</div><div class="match-vs">VS</div><div class="match-team">FC Arystan</div></div>
+    <div class="match-status"><i class="fa-regular fa-clock"></i> Күтілуде</div>
+  </div>
+  <div class="match-card">
+    <div class="match-round"><i class="fa-solid fa-circle-dot"></i> 3-тур</div>
+    <div class="match-teams"><div class="match-team">Real Madrid</div><div class="match-vs">VS</div><div class="match-team">FC Özlem</div></div>
+    <div class="match-status"><i class="fa-regular fa-clock"></i> Күтілуде</div>
+  </div>
+</div>
+
+<!-- STANDINGS -->
+<div class="page pb" id="page-standings">
+  <div class="section-title"><i class="fa-solid fa-trophy"></i> Ұпай таблицасы</div>
+  <div class="standings-wrap">
+    <table class="standings-table">
+      <thead><tr><th>#</th><th>Команда</th><th>О</th><th>Ж</th><th>Т</th><th>Ж</th><th>ҰП</th></tr></thead>
+      <tbody>
+        <tr><td><span class="rank-badge">1</span></td><td>FC Shalkar</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="pts-cell">0</td></tr>
+        <tr><td><span class="rank-badge">2</span></td><td>Man Utd</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="pts-cell">0</td></tr>
+        <tr><td><span class="rank-badge">3</span></td><td>FC Arystan</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="pts-cell">0</td></tr>
+        <tr><td><span class="rank-badge">4</span></td><td>FC Özlem</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="pts-cell">0</td></tr>
+        <tr><td><span class="rank-badge">5</span></td><td>Real Madrid</td><td>0</td><td>0</td><td>0</td><td>0</td><td class="pts-cell">0</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="legend">
+    <span><i class="fa-solid fa-circle"></i> О — Ойындар</span>
+    <span><i class="fa-solid fa-check"></i> Ж — Жеңіс</span>
+    <span><i class="fa-solid fa-minus"></i> Т — Тең</span>
+    <span><i class="fa-solid fa-xmark"></i> Ж — Жеңіліс</span>
+    <span><i class="fa-solid fa-star"></i> ҰП — Ұпай</span>
+  </div>
+</div>
+
+<!-- RULES -->
+<div class="page pb" id="page-rules">
+  <div class="section-title"><i class="fa-solid fa-book-open"></i> Ережелер</div>
+
+  <div class="rule-item">
+    <div class="rule-icon-wrap"><i class="fa-solid fa-users"></i></div>
+    <div><div class="rule-title">Команда құрамы</div><div class="rule-text">Әр командада 5 негізгі ойыншы болады. Қажет болса замена қосуға болады.</div></div>
+  </div>
+  <div class="rule-item">
+    <div class="rule-icon-wrap"><i class="fa-solid fa-crown"></i></div>
+    <div><div class="rule-title">Капитан</div><div class="rule-text">Командасын бірінші ашқан ойыншы сол команданың капитаны болып есептеледі.</div></div>
+  </div>
+  <div class="rule-item">
+    <div class="rule-icon-wrap"><i class="fa-brands fa-minecraft"></i></div>
+    <div><div class="rule-title">Minecraft нұсқасы</div><div class="rule-text">Ойын тек <strong>1.21.80.03</strong> Bedrock Edition нұсқасында жүреді. Барлық ойыншылар осы нұсқаны пайдаланулары тиіс.</div></div>
+  </div>
+  <div class="rule-item">
+    <div class="rule-icon-wrap"><i class="fa-solid fa-shirt"></i></div>
+    <div><div class="rule-title">Форма</div><div class="rule-text">Әр команданың өз формасы болады. Матч алдында форма міндетті түрде киілуі тиіс.</div></div>
+  </div>
+  <div class="rule-item">
+    <div class="rule-icon-wrap"><i class="fa-solid fa-server"></i></div>
+    <div><div class="rule-title">Сервер</div><div class="rule-text">IP: <strong style="color:var(--green2)">Footballmatch.aternos.me</strong><br>Матч басталар алдында серверде болу керек.</div></div>
+  </div>
+  <div class="rule-item">
+    <div class="rule-icon-wrap"><i class="fa-solid fa-futbol"></i></div>
+    <div><div class="rule-title">Ойын жүйесі</div><div class="rule-text">Лига форматы — барлық команда бір-бірімен ойнайды. Ең көп ұпай жинаған чемпион атанады.</div></div>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="page pb" id="page-about">
+  <div class="about-hero">
+    <img src="images/ligacraft_general_logo.png" class="about-logo"
+         onerror="this.style.display='none';document.getElementById('alogo').style.display='flex'" alt="Ligacraft">
+    <div class="about-logo-fallback" id="alogo"><i class="fa-solid fa-futbol"></i></div>
+    <div class="about-name">LIGA<span>CRAFT</span></div>
+    <p class="about-desc">Майнкрафтта футбол лигасы — бұл тек ойын емес, бұл команда рухы, бәсекелестік және достық!</p>
+  </div>
+  <div class="about-card">
+    <div class="about-card-icon"><i class="fa-solid fa-flag"></i></div>
+    <div><div class="about-card-title">Жоба атауы</div><div class="about-card-val">Ligacraft — Minecraft Football League</div></div>
+  </div>
+  <div class="about-card">
+    <div class="about-card-icon"><i class="fa-brands fa-minecraft"></i></div>
+    <div><div class="about-card-title">Платформа</div><div class="about-card-val">Minecraft Bedrock 1.21.80.03</div></div>
+  </div>
+  <div class="about-card">
+    <div class="about-card-icon"><i class="fa-solid fa-server"></i></div>
+    <div><div class="about-card-title">Сервер</div><div class="about-card-val">Footballmatch.aternos.me</div></div>
+  </div>
+  <div class="about-card">
+    <div class="about-card-icon"><i class="fa-solid fa-shield-halved"></i></div>
+    <div><div class="about-card-title">Командалар</div><div class="about-card-val">5 команда · 25 ойыншы</div></div>
+  </div>
+  <div class="about-card">
+    <div class="about-card-icon"><i class="fa-solid fa-calendar"></i></div>
+    <div><div class="about-card-title">Сезон</div><div class="about-card-val">Season 1 — 2025</div></div>
+  </div>
+</div>
+
+<script>
+  function toggleRoster(id, card) {
+    const roster = document.getElementById(id);
+    const isOpen = roster.classList.contains('open');
+    // close all
+    document.querySelectorAll('.roster').forEach(r => r.classList.remove('open'));
+    document.querySelectorAll('.team-card').forEach(c => c.classList.remove('open'));
+    if (!isOpen) {
+      roster.classList.add('open');
+      card.classList.add('open');
+    }
+  }
+  function toggleMenu() {
+    document.getElementById('menuBtn').classList.toggle('active');
+    document.getElementById('drawer').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('show');
+  }
+  function closeMenu() {
+    document.getElementById('menuBtn').classList.remove('active');
+    document.getElementById('drawer').classList.remove('open');
+    document.getElementById('overlay').classList.remove('show');
+  }
+  function showPage(id, el) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.drawer-link').forEach(l => l.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    el.classList.add('active');
+    closeMenu();
+    window.scrollTo(0,0);
+  }
+</script>
+</body>
+</html>
 
