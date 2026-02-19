@@ -218,6 +218,48 @@
   .about-card-val { font-size:0.88rem; color:var(--text); font-weight:700; }
 
   .pb { padding-bottom:40px; }
+
+  /* ROSTER */
+  .team-wrap { margin-bottom:12px; }
+  .team-wrap .team-card { margin-bottom:0; border-radius:16px; cursor:pointer; user-select:none; }
+  .team-wrap .team-card.open { border-bottom-left-radius:0; border-bottom-right-radius:0; border-bottom-color:transparent; }
+  .roster-arrow { color:var(--muted); font-size:0.8rem; transition:transform 0.3s; flex-shrink:0; }
+  .team-card.open .roster-arrow { transform:rotate(180deg); color:var(--green); }
+
+  .roster {
+    max-height:0; overflow:hidden;
+    background:var(--card);
+    border:1.5px solid var(--border); border-top:none;
+    border-bottom-left-radius:16px; border-bottom-right-radius:16px;
+    transition:max-height 0.38s cubic-bezier(.4,0,.2,1);
+    box-shadow:var(--shadow);
+  }
+  .roster.open { max-height:600px; }
+
+  .roster-player {
+    display:flex; align-items:center; gap:10px;
+    padding:11px 18px; font-size:0.86rem; font-weight:700;
+    color:var(--text); border-bottom:1px solid var(--bg2);
+  }
+  .roster-player:last-child { border-bottom:none; }
+  .roster-player i { color:var(--green); font-size:0.85rem; }
+  .roster-player.suspended { color:var(--muted); }
+  .roster-player.suspended i { color:#e6a817; }
+
+  .p-num {
+    font-family:'Orbitron',monospace; font-size:0.62rem; font-weight:800;
+    color:var(--muted); background:var(--green-lt);
+    border:1px solid var(--green-md); border-radius:6px;
+    padding:2px 6px; min-width:24px; text-align:center;
+  }
+  .badge-suspended {
+    margin-left:auto; background:rgba(230,168,23,0.12);
+    border:1px solid rgba(230,168,23,0.3); color:#c98a00;
+    font-size:0.62rem; border-radius:20px; padding:2px 9px;
+    display:inline-flex; align-items:center; gap:4px; font-weight:700;
+  }
+  .badge-suspended i { font-size:0.62rem; color:#c98a00; }
+  .roster-empty { color:var(--muted); font-style:italic; justify-content:center; font-weight:600; }
 </style>
 </head>
 <body>
@@ -247,20 +289,20 @@
 <div class="page active" id="page-home">
   <div class="hero">
     <img src="images/ligacraft_general_logo.png" class="hero-logo" onerror="this.style.display='none'" alt="Ligacraft">
-    <div class="hero-badge"><i class="fa-solid fa-bolt"></i> Season 1 — 2026</div>
+    <div class="hero-badge"><i class="fa-solid fa-bolt"></i> Season 1 — 2025</div>
     <h1>LIGA<span>CRAFT</span></h1>
     <p class="hero-sub">Майнкрафттағы ең қызықты футбол лигасы. 5 клуб, 1 чемпион!</p>
     <div class="ip-box">
       <div class="ip-label"><i class="fa-solid fa-server"></i> Сервер IP</div>
       <div class="ip-value">Footballmatch.aternos.me</div>
-      <div class="ip-tag"><i class="fa-brands fa-minecraft"></i> Minecraft Java Edition</div>
+      <div class="ip-tag"><i class="fa-brands fa-minecraft"></i> Minecraft Bedrock Edition</div>
     </div>
     <div class="stats-row">
       <div class="stat-card"><i class="fa-solid fa-shield-halved"></i><span class="stat-num">5</span><span class="stat-lbl">Клуб</span></div>
       <div class="stat-card"><i class="fa-solid fa-users"></i><span class="stat-num">25</span><span class="stat-lbl">Ойыншы</span></div>
       <div class="stat-card"><i class="fa-solid fa-trophy"></i><span class="stat-num">1</span><span class="stat-lbl">Чемпион</span></div>
     </div>
-    <div class="version-pill"><i class="fa-brands fa-minecraft"></i> Minecraft 1.21.80.03</div>
+    <div class="version-pill"><i class="fa-brands fa-minecraft"></i> Minecraft Bedrock 1.21.80.03</div>
   </div>
 </div>
 
@@ -268,49 +310,103 @@
 <div class="page pb" id="page-teams">
   <div class="section-title"><i class="fa-solid fa-shield-halved"></i> Командалар</div>
 
-  <div class="team-card">
-    <div class="team-logo"><img src="images/shalqar.png" alt="FC Shalkar" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><i class="fa-solid fa-futbol" style="display:none"></i></div>
-    <div class="team-info">
-      <div class="team-name">FC Shalkar</div>
-      <div class="team-meta"><i class="fa-solid fa-users"></i> 5 ойыншы &nbsp;&middot;&nbsp; <i class="fa-solid fa-rotate"></i> Замена бар</div>
+  <!-- FC SHALKAR -->
+  <div class="team-wrap">
+    <div class="team-card" onclick="toggleRoster('r1',this)">
+      <div class="team-logo"><img src="images/shalqar.png" alt="FC Shalkar" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><i class="fa-solid fa-futbol" style="display:none"></i></div>
+      <div class="team-info">
+        <div class="team-name">FC Shalkar</div>
+        <div class="team-meta"><i class="fa-solid fa-users"></i> 6 ойыншы &nbsp;&middot;&nbsp; <i class="fa-solid fa-rotate"></i> Замена бар</div>
+      </div>
+      <i class="fa-solid fa-chevron-down roster-arrow"></i>
     </div>
-    <div class="team-num">01</div>
+    <div class="roster" id="r1">
+      <div class="roster-player"><span class="p-num">1</span><i class="fa-solid fa-user"></i> TotallyNotZoro</div>
+      <div class="roster-player"><span class="p-num">2</span><i class="fa-solid fa-user"></i> Kron</div>
+      <div class="roster-player"><span class="p-num">3</span><i class="fa-solid fa-user"></i> Eldos</div>
+      <div class="roster-player"><span class="p-num">4</span><i class="fa-solid fa-user"></i> Dervin</div>
+      <div class="roster-player"><span class="p-num">5</span><i class="fa-solid fa-user"></i> Nurgisa</div>
+      <div class="roster-player"><span class="p-num">6</span><i class="fa-solid fa-user"></i> Nurik</div>
+    </div>
   </div>
 
-  <div class="team-card">
-    <div class="team-logo"><img src="images/united_logo.png" alt="Manchester United" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><i class="fa-solid fa-futbol" style="display:none"></i></div>
-    <div class="team-info">
-      <div class="team-name">Manchester United</div>
-      <div class="team-meta"><i class="fa-solid fa-users"></i> 5 ойыншы &nbsp;&middot;&nbsp; <i class="fa-solid fa-rotate"></i> Замена бар</div>
+  <!-- MANCHESTER UNITED -->
+  <div class="team-wrap">
+    <div class="team-card" onclick="toggleRoster('r2',this)">
+      <div class="team-logo"><img src="images/united_logo.png" alt="Manchester United" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><i class="fa-solid fa-futbol" style="display:none"></i></div>
+      <div class="team-info">
+        <div class="team-name">Manchester United</div>
+        <div class="team-meta"><i class="fa-solid fa-users"></i> 8 ойыншы &nbsp;&middot;&nbsp; <i class="fa-solid fa-rotate"></i> Замена бар</div>
+      </div>
+      <i class="fa-solid fa-chevron-down roster-arrow"></i>
     </div>
-    <div class="team-num">02</div>
+    <div class="roster" id="r2">
+      <div class="roster-player"><span class="p-num">1</span><i class="fa-solid fa-user"></i> Alikhan</div>
+      <div class="roster-player"><span class="p-num">2</span><i class="fa-solid fa-user"></i> Nurka</div>
+      <div class="roster-player"><span class="p-num">3</span><i class="fa-solid fa-user"></i> Kuka</div>
+      <div class="roster-player"><span class="p-num">4</span><i class="fa-solid fa-user"></i> Asko</div>
+      <div class="roster-player"><span class="p-num">5</span><i class="fa-solid fa-user"></i> Ako</div>
+      <div class="roster-player"><span class="p-num">6</span><i class="fa-solid fa-user"></i> Zart</div>
+      <div class="roster-player"><span class="p-num">7</span><i class="fa-solid fa-user"></i> Serikov</div>
+      <div class="roster-player suspended"><span class="p-num">8</span><i class="fa-solid fa-user-clock"></i> Keyza <span class="badge-suspended"><i class="fa-solid fa-hourglass-half"></i> 2 ай арена</span></div>
+    </div>
   </div>
 
-  <div class="team-card">
-    <div class="team-logo"><img src="images/arystan_logo.png" alt="FC Arystan" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><i class="fa-solid fa-futbol" style="display:none"></i></div>
-    <div class="team-info">
-      <div class="team-name">FC Arystan</div>
-      <div class="team-meta"><i class="fa-solid fa-users"></i> 5 ойыншы &nbsp;&middot;&nbsp; <i class="fa-solid fa-rotate"></i> Замена бар</div>
+  <!-- FC ARYSTAN -->
+  <div class="team-wrap">
+    <div class="team-card" onclick="toggleRoster('r3',this)">
+      <div class="team-logo"><img src="images/arystan_logo.png" alt="FC Arystan" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><i class="fa-solid fa-futbol" style="display:none"></i></div>
+      <div class="team-info">
+        <div class="team-name">FC Arystan</div>
+        <div class="team-meta"><i class="fa-solid fa-users"></i> 6 ойыншы &nbsp;&middot;&nbsp; <i class="fa-solid fa-rotate"></i> Замена бар</div>
+      </div>
+      <i class="fa-solid fa-chevron-down roster-arrow"></i>
     </div>
-    <div class="team-num">03</div>
+    <div class="roster" id="r3">
+      <div class="roster-player"><span class="p-num">1</span><i class="fa-solid fa-user"></i> Madik</div>
+      <div class="roster-player"><span class="p-num">2</span><i class="fa-solid fa-user"></i> Purbe</div>
+      <div class="roster-player"><span class="p-num">3</span><i class="fa-solid fa-user"></i> Kaus</div>
+      <div class="roster-player"><span class="p-num">4</span><i class="fa-solid fa-user"></i> Alikhon</div>
+      <div class="roster-player"><span class="p-num">5</span><i class="fa-solid fa-user"></i> Miko</div>
+      <div class="roster-player"><span class="p-num">6</span><i class="fa-solid fa-user"></i> Flody</div>
+    </div>
   </div>
 
-  <div class="team-card">
-    <div class="team-logo"><img src="images/uzlem_logo.png" alt="FC Özlem" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><i class="fa-solid fa-futbol" style="display:none"></i></div>
-    <div class="team-info">
-      <div class="team-name">FC Özlem</div>
-      <div class="team-meta"><i class="fa-solid fa-users"></i> 5 ойыншы &nbsp;&middot;&nbsp; <i class="fa-solid fa-rotate"></i> Замена бар</div>
+  <!-- FC ÖZLEM -->
+  <div class="team-wrap">
+    <div class="team-card" onclick="toggleRoster('r4',this)">
+      <div class="team-logo"><img src="images/uzlem_logo.png" alt="FC Özlem" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><i class="fa-solid fa-futbol" style="display:none"></i></div>
+      <div class="team-info">
+        <div class="team-name">FC Özlem</div>
+        <div class="team-meta"><i class="fa-solid fa-users"></i> 8 ойыншы &nbsp;&middot;&nbsp; <i class="fa-solid fa-rotate"></i> Замена бар</div>
+      </div>
+      <i class="fa-solid fa-chevron-down roster-arrow"></i>
     </div>
-    <div class="team-num">04</div>
+    <div class="roster" id="r4">
+      <div class="roster-player"><span class="p-num">1</span><i class="fa-solid fa-user"></i> Saginish</div>
+      <div class="roster-player"><span class="p-num">2</span><i class="fa-solid fa-user"></i> Beytanys</div>
+      <div class="roster-player"><span class="p-num">3</span><i class="fa-solid fa-user"></i> Neighbour</div>
+      <div class="roster-player"><span class="p-num">4</span><i class="fa-solid fa-user"></i> Yasin</div>
+      <div class="roster-player"><span class="p-num">5</span><i class="fa-solid fa-user"></i> Jako</div>
+      <div class="roster-player"><span class="p-num">6</span><i class="fa-solid fa-user"></i> Rahman</div>
+      <div class="roster-player"><span class="p-num">7</span><i class="fa-solid fa-user"></i> Balkibayev</div>
+      <div class="roster-player"><span class="p-num">8</span><i class="fa-solid fa-user"></i> Taibek</div>
+    </div>
   </div>
 
-  <div class="team-card">
-    <div class="team-logo"><img src="images/madrid_logo.png" alt="Real Madrid" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><i class="fa-solid fa-futbol" style="display:none"></i></div>
-    <div class="team-info">
-      <div class="team-name">Real Madrid</div>
-      <div class="team-meta"><i class="fa-solid fa-users"></i> 5 ойыншы &nbsp;&middot;&nbsp; <i class="fa-solid fa-rotate"></i> Замена бар</div>
+  <!-- REAL MADRID -->
+  <div class="team-wrap">
+    <div class="team-card" onclick="toggleRoster('r5',this)">
+      <div class="team-logo"><img src="images/madrid_logo.png" alt="Real Madrid" onerror="this.style.display='none';this.nextElementSibling.style.display='block'"><i class="fa-solid fa-futbol" style="display:none"></i></div>
+      <div class="team-info">
+        <div class="team-name">Real Madrid</div>
+        <div class="team-meta"><i class="fa-solid fa-users"></i> 5 ойыншы &nbsp;&middot;&nbsp; <i class="fa-solid fa-rotate"></i> Замена бар</div>
+      </div>
+      <i class="fa-solid fa-chevron-down roster-arrow"></i>
     </div>
-    <div class="team-num">05</div>
+    <div class="roster" id="r5">
+      <div class="roster-player roster-empty"><i class="fa-solid fa-circle-info"></i> Ойыншылар тізімі толтырылмаған</div>
+    </div>
   </div>
 </div>
 
@@ -383,7 +479,7 @@
   </div>
   <div class="rule-item">
     <div class="rule-icon-wrap"><i class="fa-brands fa-minecraft"></i></div>
-    <div><div class="rule-title">Minecraft нұсқасы</div><div class="rule-text">Ойын тек <strong>1.21.80.03</strong> нұсқасында жүреді. Барлық ойыншылар осы нұсқаны пайдаланулары тиіс.</div></div>
+    <div><div class="rule-title">Minecraft нұсқасы</div><div class="rule-text">Ойын тек <strong>1.21.80.03</strong> Bedrock Edition нұсқасында жүреді. Барлық ойыншылар осы нұсқаны пайдаланулары тиіс.</div></div>
   </div>
   <div class="rule-item">
     <div class="rule-icon-wrap"><i class="fa-solid fa-shirt"></i></div>
@@ -414,7 +510,7 @@
   </div>
   <div class="about-card">
     <div class="about-card-icon"><i class="fa-brands fa-minecraft"></i></div>
-    <div><div class="about-card-title">Платформа</div><div class="about-card-val">Minecraft 1.21.80.03</div></div>
+    <div><div class="about-card-title">Платформа</div><div class="about-card-val">Minecraft Bedrock 1.21.80.03</div></div>
   </div>
   <div class="about-card">
     <div class="about-card-icon"><i class="fa-solid fa-server"></i></div>
@@ -426,11 +522,22 @@
   </div>
   <div class="about-card">
     <div class="about-card-icon"><i class="fa-solid fa-calendar"></i></div>
-    <div><div class="about-card-title">Сезон</div><div class="about-card-val">Season 1 — 2026</div></div>
+    <div><div class="about-card-title">Сезон</div><div class="about-card-val">Season 1 — 2025</div></div>
   </div>
 </div>
 
 <script>
+  function toggleRoster(id, card) {
+    const roster = document.getElementById(id);
+    const isOpen = roster.classList.contains('open');
+    // close all
+    document.querySelectorAll('.roster').forEach(r => r.classList.remove('open'));
+    document.querySelectorAll('.team-card').forEach(c => c.classList.remove('open'));
+    if (!isOpen) {
+      roster.classList.add('open');
+      card.classList.add('open');
+    }
+  }
   function toggleMenu() {
     document.getElementById('menuBtn').classList.toggle('active');
     document.getElementById('drawer').classList.toggle('open');
