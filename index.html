@@ -320,7 +320,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255
     <button class="drawer-link" data-page="schedule" onclick="showPage('schedule',this)"><i class="fa-solid fa-calendar-days"></i> Кесте</button>
     <button class="drawer-link" data-page="standings" onclick="showPage('standings',this)"><i class="fa-solid fa-trophy"></i> Таблица</button>
     <button class="drawer-link" data-page="rules" onclick="showPage('rules',this)"><i class="fa-solid fa-book-open"></i> Ережелер</button>
-    <button class="drawer-link" data-page="about" onclick="showPage('about',this)"><i class="fa-solid fa-circle-info"></i>Жоба туралы</button>
+    <button class="drawer-link" data-page="about" onclick="showPage('about',this)"><i class="fa-solid fa-circle-info"></i> Туралы</button>
     <div class="drawer-divider"></div>
     <button class="drawer-logout" onclick="doLogout()"><i class="fa-solid fa-right-from-bracket"></i> Шығу</button>
   </div>
@@ -332,7 +332,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255
         <img src="images/ligacraft_general_logo.png" alt="Ligacraft" id="heroLogo">
         <i class="fa-solid fa-futbol" id="heroLogoFb" style="display:none"></i>
       </div>
-      <div class="hero-badge"><i class="fa-solid fa-bolt"></i> Season 1 — 2026</div>
+      <div class="hero-badge"><i class="fa-solid fa-bolt"></i> Season 1 — 2025</div>
       <h1>LIGA<span>CRAFT</span></h1>
       <p class="hero-sub">Майнкрафттағы ең қызықты футбол лигасы. 5 клуб, 1 чемпион!</p>
       <div class="ip-box">
@@ -587,6 +587,56 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255
   <!-- SCHEDULE -->
   <div class="page pb" id="page-schedule">
     <div class="section-title"><i class="fa-solid fa-calendar-days"></i> Матчтар кестесі</div>
+
+    <!-- Playoff section -->
+    <div style="background:var(--card);border:1.5px solid var(--gold-bd);border-radius:18px;padding:18px 16px;margin-bottom:20px;box-shadow:var(--shadow2);position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),#f5e07a);border-radius:3px 3px 0 0;"></div>
+      <div style="font-family:'Orbitron',monospace;font-size:0.7rem;color:var(--gold);letter-spacing:2px;text-transform:uppercase;margin-bottom:16px;font-weight:800;display:flex;align-items:center;gap:8px;">
+        <i class="fa-solid fa-trophy"></i> Плей-офф кезеңі
+      </div>
+
+      <!-- 1/4 final -->
+      <div style="font-family:'Orbitron',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;font-weight:700;">⚔️ 1/4 Финал</div>
+
+      <div class="match-card" style="margin-bottom:10px;border-color:var(--gold-bd);">
+        <div class="match-round" style="color:var(--gold);"><i class="fa-solid fa-shield-halved"></i> 1/4 Финал</div>
+        <div style="font-size:0.68rem;color:var(--muted);font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:5px;"><i class="fa-regular fa-calendar" style="color:var(--gold);"></i> 20.02.26 — 21:00</div>
+        <div class="match-teams">
+          <div class="match-team">FC Özlem</div>
+          <div class="match-vs" style="background:var(--gold-lt);border-color:var(--gold-bd);color:var(--gold);">VS</div>
+          <div class="match-team">FC Arystan</div>
+        </div>
+        <div class="match-status"><i class="fa-regular fa-clock"></i> Күтілуде</div>
+      </div>
+
+      <div class="match-card" style="margin-bottom:16px;border-color:var(--gold-bd);">
+        <div class="match-round" style="color:var(--gold);"><i class="fa-solid fa-shield-halved"></i> 1/4 Финал</div>
+        <div style="font-size:0.68rem;color:var(--muted);font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:5px;"><i class="fa-regular fa-calendar" style="color:var(--gold);"></i> 21.02.26 — 21:00</div>
+        <div class="match-teams">
+          <div class="match-team">Manchester United</div>
+          <div class="match-vs" style="background:var(--gold-lt);border-color:var(--gold-bd);color:var(--gold);">VS</div>
+          <div class="match-team">FC Shalkar</div>
+        </div>
+        <div class="match-status"><i class="fa-regular fa-clock"></i> Күтілуде</div>
+      </div>
+
+      <!-- Final -->
+      <div style="font-family:'Orbitron',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;font-weight:700;">🏆 Финал</div>
+
+      <div class="match-card" style="border-color:var(--gold);background:var(--gold-lt);">
+        <div class="match-round" style="color:var(--gold);"><i class="fa-solid fa-trophy"></i> ФИНАЛ</div>
+        <div style="font-size:0.68rem;color:var(--muted);font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:5px;"><i class="fa-regular fa-calendar" style="color:var(--gold);"></i> 22.02.26 — 21:00</div>
+        <div class="match-teams">
+          <div class="match-team" style="color:var(--gold);font-family:'Orbitron',monospace;font-size:0.7rem;">?</div>
+          <div class="match-vs" style="background:var(--gold);border-color:var(--gold);color:#fff;">VS</div>
+          <div class="match-team" style="color:var(--gold);font-family:'Orbitron',monospace;font-size:0.7rem;">?</div>
+        </div>
+        <div class="match-status" style="color:var(--gold);"><i class="fa-solid fa-crown" style="color:var(--gold);"></i> Жеңімпаз анықталады</div>
+      </div>
+    </div>
+
+    <!-- League matches -->
+    <div style="font-family:'Orbitron',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;font-weight:700;"><i class="fa-solid fa-list" style="color:var(--green);margin-right:6px;"></i>Лига матчтары</div>
     <div class="match-card"><div class="match-round"><i class="fa-solid fa-circle-dot"></i> 1-тур</div><div class="match-teams"><div class="match-team">FC Shalkar</div><div class="match-vs">VS</div><div class="match-team">Manchester United</div></div><div class="match-status"><i class="fa-regular fa-clock"></i> Күтілуде</div></div>
     <div class="match-card"><div class="match-round"><i class="fa-solid fa-circle-dot"></i> 1-тур</div><div class="match-teams"><div class="match-team">FC Arystan</div><div class="match-vs">VS</div><div class="match-team">Real Madrid</div></div><div class="match-status"><i class="fa-regular fa-clock"></i> Күтілуде</div></div>
     <div class="match-card"><div class="match-round"><i class="fa-solid fa-circle-dot"></i> 2-тур</div><div class="match-teams"><div class="match-team">FC Özlem</div><div class="match-vs">VS</div><div class="match-team">FC Shalkar</div></div><div class="match-status"><i class="fa-regular fa-clock"></i> Күтілуде</div></div>
@@ -640,7 +690,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255
     <div class="about-card"><div class="about-card-icon"><i class="fa-brands fa-minecraft"></i></div><div><div class="about-card-title">Платформа</div><div class="about-card-val">Minecraft Bedrock 1.21.80.03</div></div></div>
     <div class="about-card"><div class="about-card-icon"><i class="fa-solid fa-server"></i></div><div><div class="about-card-title">Сервер</div><div class="about-card-val">Footballmatch.aternos.me</div></div></div>
     <div class="about-card"><div class="about-card-icon"><i class="fa-solid fa-shield-halved"></i></div><div><div class="about-card-title">Командалар</div><div class="about-card-val">5 команда · 35 ойыншы</div></div></div>
-    <div class="about-card"><div class="about-card-icon"><i class="fa-solid fa-calendar"></i></div><div><div class="about-card-title">Сезон</div><div class="about-card-val">Season 1 — 2026</div></div></div>
+    <div class="about-card"><div class="about-card-icon"><i class="fa-solid fa-calendar"></i></div><div><div class="about-card-title">Сезон</div><div class="about-card-val">Season 1 — 2025</div></div></div>
   </div>
 
   <!-- APPLICATIONS PAGE -->
